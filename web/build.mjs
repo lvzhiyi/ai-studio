@@ -1,11 +1,11 @@
-// 构建前端：src/ → ../studio/web/static/（产物提交进仓库，用控制台的人不需要装 Node）
+// 构建前端：src/ → ../engine/studio/web/static/（产物提交进仓库，用控制台的人不需要装 Node）
 // npm run build   一次性构建（压缩）
 // npm run dev     监听改动自动重新构建，刷新浏览器即可
 import * as esbuild from "esbuild";
 import { copyFileSync, mkdirSync } from "node:fs";
 
 const watch = process.argv.includes("--watch");
-const outdir = "../studio/web/static";
+const outdir = "../engine/studio/web/static";
 mkdirSync(outdir, { recursive: true });
 copyFileSync("index.html", `${outdir}/index.html`);
 
