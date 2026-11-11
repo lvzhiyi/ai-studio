@@ -1,11 +1,11 @@
 # ai-studio · 开发约定
 
-给 AI 编程助手和自己看的约定。产品和运行方式见 [README](README.md)。
+给 AI 编程助手和自己看的约定。产品和运行方式见 [README](README.md)，分层、现状和过渡计划见 [架构说明](docs/architecture.md)。
 
 ## 仓库
 
 - `web/`：Web 工作台（Vite + React + TS）
-- `server/`：NestJS Agent 后端（目前只做转发、限流、模板下发）
+- `server/`：NestJS Agent 后端（目前只有流式分镜和限流）
 - `engine/`：Python 执行引擎 studio-engine，所有 `uv run studio ...` 命令都在这个目录下运行
 - 三个子项目各自管理依赖、各自测试，只通过 HTTP 通信；不跨目录 import 代码
 
@@ -17,6 +17,8 @@
 - 日志里不打印故事内容、请求体和响应体。
 - 前端构建产物暂时提交在 `engine/studio/web/static/`（用控制台的人不需要装 Node），改了 `web/src` 要重新 `npm run build`。
 - `engine/studio/jingtouben.py`（镜头本导入）已废弃，只为兼容旧导出文件保留，不再扩展。
+- 分镜由 server 负责：Agent 拆分镜走 server 的 LLM 网关；`engine/studio/plan.py` 只给命令行 `studio plan` 用，不再扩展。
+- engine 不感知用户和 run，状态归 server 管。
 - 不自动推送或发布；远程仓库是公开的，提交前确认不含密钥和个人资料。
 
 ## 验证

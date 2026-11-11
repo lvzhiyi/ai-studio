@@ -4,9 +4,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { DeviceThrottlerGuard } from './common/device-throttler.guard';
 import { HealthController } from './health.controller';
-import { PropsModule } from './props/props.module';
 import { StoryboardModule } from './storyboard/storyboard.module';
-import { TemplatesModule } from './templates/templates.module';
 
 @Module({
   imports: [
@@ -18,8 +16,6 @@ import { TemplatesModule } from './templates/templates.module';
       ],
     }),
     StoryboardModule,
-    PropsModule,
-    TemplatesModule,
   ],
   controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: DeviceThrottlerGuard }],

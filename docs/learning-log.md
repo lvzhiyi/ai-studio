@@ -373,3 +373,17 @@ ai-tools 和镜头本合并成一个仓库 ai-studio，放在 `/Users/lv/work/AI
 ### 待同步：跃迁工作台
 
 - 2026-11-11：ai-tools 与镜头本合并为 ai-studio（web / server / engine 三个子项目），镜头本客户端归档；前端改用 Vite 独立运行；engine 55 项、server 25 项测试通过，两种方式打开控制台均正常。当前没有可写入的跃迁工作台目标，按 CLAUDE.md 保留此条待同步。
+
+## 2026-11-11 · 合并后的清理
+
+把合并时漏掉的镜头本遗留清理掉：server 删除道具绘图（`props` 模块、`POST /props/draw`、`LlmService.streamPropDrawings`）和即梦/可灵提示词模板（`templates` 模块、`GET /templates`），相关测试一起删除；限流、模拟数据、环境变量示例里的注释改成 ai-studio 的口径。新增 [架构说明](architecture.md)，写清目标架构、合并后的现状和按周过渡的计划；AGENTS.md 写明分镜由 server 负责，`engine/studio/plan.py` 只给命令行用。
+
+顺手修了一个旧问题：server 的 Dockerfile 用的是 `npm ci`，但仓库里只有 `pnpm-lock.yaml`，镜像其实构建不了。现在改成 corepack + pnpm，并在 package.json 里写了 `packageManager: pnpm@9.1.0`，CI 也从这个字段读 pnpm 版本。
+
+分镜输出的字段（`props`、`cameraMove`、`durationSec` 等）是镜头本预演时代留下的，这次没有改，留到第 1 周和 engine 的分镜表格式一起对齐，避免在还没有评测基线的时候改提示词。
+
+验证：server typecheck 通过，18 项测试通过（行覆盖率 99.4%、分支 84.78%，门槛 90% / 75%），build 通过；本地启动后 `/health` 正常，`/templates` 和 `/props/draw` 返回 404。Docker 守护进程没开，镜像构建未验证。
+
+### 待同步：跃迁工作台
+
+- 2026-11-11：清理合并遗留：server 删除道具绘图和即梦/可灵模板，补架构说明和分镜职责约定，Dockerfile 改用 pnpm；server 18 项测试通过，镜像构建未验证。当前没有可写入的跃迁工作台目标，按 CLAUDE.md 保留此条待同步。

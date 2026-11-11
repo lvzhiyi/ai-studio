@@ -7,6 +7,8 @@ const DEVICE_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}
  * 按设备限流：优先使用客户端生成的安装 ID（x-device-id），缺失或格式不对时退回按 IP。
  *
  * 安装 ID 可以被伪造，它挡的是正常用户的连点和脚本小号；真正防刷还要在网关层叠加 IP 限流和全局配额。
+ *
+ * 安装 ID 原本由镜头本 App 生成；Web 工作台目前不发这个头，所以按 IP 限流。第 5 周加登录后改为按用户限流。
  */
 @Injectable()
 export class DeviceThrottlerGuard extends ThrottlerGuard {

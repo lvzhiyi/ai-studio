@@ -1,7 +1,7 @@
-/** 景别枚举，必须与客户端 ShotSize.label 保持一致。 */
+/** 景别枚举（沿用镜头本客户端的叫法；第 1 周和 engine 分镜表格式对齐时统一调整）。 */
 export const SHOT_SIZES = ['大远景', '远景', '全景', '中景', '近景', '特写', '大特写'] as const;
 
-/** 运镜枚举，必须与客户端 CameraMove.label 保持一致。 */
+/** 运镜枚举（沿用镜头本客户端的叫法；第 1 周和 engine 分镜表格式对齐时统一调整）。 */
 export const CAMERA_MOVES = ['固定', '推', '拉', '摇', '移', '跟', '升降'] as const;
 
 export interface StoryboardInput {

@@ -10,7 +10,7 @@
 
 ```
 web/      Web 工作台：Vite + React + TypeScript
-server/   Agent 后端：NestJS（目前是转发服务：SSE、按设备限流、提示词模板下发；之后演进为 Agent 编排）
+server/   Agent 后端：NestJS（目前只有流式分镜 SSE 和限流；之后演进为 Agent 编排）
 engine/   执行引擎 studio-engine：Python（出图、人脸质检、配音、图生视频、预览视频、MCP Server），只监听本机
 docs/     学习日志、路线图、模型知识图谱、工具速查
 ```
@@ -19,7 +19,7 @@ docs/     学习日志、路线图、模型知识图谱、工具速查
 web ──REST + SSE──▶ server ──HTTP──▶ engine ──▶ ComfyUI / LM Studio / MLX
 ```
 
-现阶段 server 还没接上 engine，web 直接连 engine 的控制台接口（`127.0.0.1:8780`）。
+现阶段 server 还没接上 engine，web 直接连 engine 的控制台接口（`127.0.0.1:8780`）。各阶段怎么过渡见 [架构说明](docs/architecture.md)。
 
 ## 本地运行
 

@@ -69,5 +69,6 @@
         "branches": 75
       }
     }
-  }
+  },
+  "packageManager": "pnpm@9.1.0"
 }

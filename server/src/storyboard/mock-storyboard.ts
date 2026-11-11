@@ -69,13 +69,12 @@ const MOCK_SHOTS = [
 
 /**
  * 没有配置模型 Key 时的模拟输出：先等一段首字延迟，再按随机长度切块输出，模拟真实模型的流式增量。
- * 切块会把一行 JSON 拆到多个增量里，正好覆盖客户端的拼行逻辑。
+ * 切块会把一行 JSON 拆到多个增量里，正好覆盖调用方的拼行逻辑。
  */
 export async function* mockStoryboard(signal: AbortSignal): AsyncGenerator<string> {
   const lines = MOCK_SHOTS.map((shot) => JSON.stringify(shot));
-  // 故意给第 3 行加一个行尾逗号，演示客户端的修复兜底；
+  // 故意给第 3 行加一个行尾逗号，演示调用方的修复兜底；
   // 第 2 行不给时长和道具、第 4 行给未知运镜「缓推」，演示默认时长、关键词道具和运镜兜底；
-  // 第 1 行的「行李箱」不是内置道具，演示道具生成
   lines[2] = `${lines[2]},`;
   const text = `${lines.join('\n')}\n`;
 

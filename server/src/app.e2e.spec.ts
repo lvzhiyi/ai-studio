@@ -3,16 +3,15 @@ import { Test } from '@nestjs/testing';
 import { AppModule } from './app.module';
 import { configureApp } from './app.setup';
 import { LlmService, UpstreamError } from './llm/llm.service';
-import templates from './templates/prompt-templates.json';
 
 /**
  * 端到端：起一个真实 HTTP 服务（和 main.ts 同一套配置），用 fetch 请求。
  * 模型调用替换成假的 LlmService，测试不联网、不花钱。
  */
-describe('转发服务', () => {
+describe('ai-studio 后端', () => {
   let app: NestExpressApplication;
   let baseUrl: string;
-  let llm: jest.Mocked<Pick<LlmService, 'streamStoryboard' | 'streamPropDrawings'>>;
+  let llm: jest.Mocked<Pick<LlmService, 'streamStoryboard'>>;
 
   const story = '雨夜，林夏在老街等一个不会来的人。';
   let deviceSeq = 0;
@@ -27,7 +26,7 @@ describe('转发服务', () => {
     });
 
   beforeAll(async () => {
-    llm = { streamStoryboard: jest.fn(), streamPropDrawings: jest.fn() };
+    llm = { streamStoryboard: jest.fn() };
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(LlmService)
       .useValue(llm)
@@ -111,43 +110,6 @@ describe('转发服务', () => {
     expect(llm.streamStoryboard).toHaveBeenLastCalledWith({ story, characters: [] }, expect.any(AbortSignal));
   });
 
-  const postDraw = (body: unknown, deviceId = nextDevice()) =>
-    fetch(`${baseUrl}/props/draw`, {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-device-id': deviceId },
-      body: JSON.stringify(body),
-    });
-
-  it('道具绘图：把模型输出转成 SSE，出错时只发错误码', async () => {
-    llm.streamPropDrawings.mockImplementation(async function* () {
-      yield '{"items":';
-      yield '[]}';
-    });
-    const response = await postDraw({ names: ['猫', '吉他'] });
-    expect(response.status).toBe(200);
-    expect(await response.text()).toBe(
-      'event: delta\ndata: {"text":"{\\"items\\":"}\n\n' +
-        'event: delta\ndata: {"text":"[]}"}\n\n' +
-        'event: done\ndata: {}\n\n',
-    );
-    expect(llm.streamPropDrawings).toHaveBeenCalledWith(['猫', '吉他'], expect.any(AbortSignal));
-
-    llm.streamPropDrawings.mockImplementation(async function* () {
-      throw new UpstreamError(500);
-    });
-    expect(await (await postDraw({ names: ['猫'] })).text()).toContain('{"code":"upstream_error"}');
-  });
-
-  it('道具绘图参数校验：0 个、超过 5 个、空名字、超过 10 个字都拒绝', async () => {
-    llm.streamPropDrawings.mockClear();
-    expect((await postDraw({ names: [] })).status).toBe(400);
-    expect((await postDraw({ names: ['一', '二', '三', '四', '五', '六'] })).status).toBe(400);
-    expect((await postDraw({ names: [''] })).status).toBe(400);
-    expect((await postDraw({ names: ['一二三四五六七八九十一'] })).status).toBe(400);
-    expect((await postDraw({ names: '猫' })).status).toBe(400);
-    expect(llm.streamPropDrawings).not.toHaveBeenCalled();
-  });
-
   it('同一设备超过每分钟额度返回 429，换设备不受影响', async () => {
     llm.streamStoryboard.mockImplementation(async function* () {});
     const device = nextDevice();
@@ -171,15 +133,6 @@ describe('转发服务', () => {
     }
     // 4 个不同的伪造 ID 共用同一个 IP 额度
     expect(statuses).toEqual([200, 200, 200, 429]);
-  });
-
-  it('下发提示词模板，带缓存头，不受限流影响', async () => {
-    for (let i = 0; i < 5; i++) {
-      const response = await fetch(`${baseUrl}/templates`);
-      expect(response.status).toBe(200);
-      expect(response.headers.get('cache-control')).toBe('public, max-age=300');
-      expect(await response.json()).toEqual(templates);
-    }
   });
 
   it('健康检查报告运行模式', async () => {

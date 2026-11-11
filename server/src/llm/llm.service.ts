@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { readSseData } from '../common/sse';
-import { buildDrawMessages } from '../props/draw.prompt';
-import { mockPropDrawings } from '../props/mock-props';
 import { mockStoryboard } from '../storyboard/mock-storyboard';
 import { buildStoryboardMessages, ChatMessage, StoryboardInput } from '../storyboard/storyboard.prompt';
 
@@ -16,7 +14,7 @@ export class UpstreamError extends Error {
  * 调用 OpenAI 兼容的 Chat Completions 流式接口（DeepSeek、通义千问、豆包等都兼容），产出文本增量。
  *
  * 不绑定某一家 SDK：换模型只改环境变量。没有配置 Key 时走模拟数据。
- * 分镜和道具绘图共用 `streamChat`，各自只负责拼消息和提供模拟数据。
+ * 各功能共用 `streamChat`，各自只负责拼消息和提供模拟数据。
  */
 @Injectable()
 export class LlmService {
@@ -27,12 +25,6 @@ export class LlmService {
   streamStoryboard(input: StoryboardInput, signal: AbortSignal): AsyncGenerator<string> {
     if (!this.hasKey) return mockStoryboard(signal);
     return this.streamChat(buildStoryboardMessages(input), { temperature: 0.7 }, signal);
-  }
-
-  /** 道具绘图：输出 `{"items":[…]}` 文本。温度低一些，格式更稳。 */
-  streamPropDrawings(names: string[], signal: AbortSignal): AsyncGenerator<string> {
-    if (!this.hasKey) return mockPropDrawings(names, signal);
-    return this.streamChat(buildDrawMessages(names), { temperature: 0.4 }, signal);
   }
 
   private get hasKey(): boolean {
@@ -58,7 +50,7 @@ export class LlmService {
         'Content-Type': 'application/json',
         Accept: 'text/event-stream',
       },
-      // 必须流式：有的中转网关对非流式请求 60 秒就超时，道具绘图一批要一两分钟
+      // 必须流式：有的中转网关对非流式请求 60 秒就超时，长输出会被截断
       body: JSON.stringify({ model, stream: true, temperature: options.temperature, messages }),
     });
     if (!response.ok || !response.body) {

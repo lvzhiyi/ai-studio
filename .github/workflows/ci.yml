@@ -51,9 +51,9 @@ jobs:
         working-directory: server
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v4  # 版本取 server/package.json 的 packageManager
         with:
-          version: 9
+          package_json_file: server/package.json
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
