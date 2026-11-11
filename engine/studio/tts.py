@@ -1,6 +1,6 @@
 """本地配音：Qwen3-TTS（mlx-audio，跑在 Apple Silicon 上）。
 
-和 ~/ai-tools/tts.py（命令行 tts 命令）用的是同一个模型，这里封装成函数给流水线批量调用。
+和 engine/tts.py（命令行 tts 命令）用的是同一个模型，这里封装成函数给流水线批量调用。
 """
 from __future__ import annotations
 

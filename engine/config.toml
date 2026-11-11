@@ -1,4 +1,4 @@
-# ai-tools 配置。改完直接生效，不用重启。
+# studio-engine 配置。改完直接生效，不用重启。
 
 [comfy]
 # ComfyUI 桌面版：设置 → 关于 里能看到端口

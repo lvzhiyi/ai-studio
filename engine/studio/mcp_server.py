@@ -1,4 +1,4 @@
-"""MCP Server：让 Claude Desktop / Claude Code / 本地 Agent 直接操作 ai-tools。
+"""MCP Server：让 Claude Desktop / Claude Code / 本地 Agent 直接操作 studio-engine（ai-studio 的执行引擎）。
 
 运行方式（stdio，由 MCP 客户端拉起，不用手动开）：
     uv run python -m studio.mcp_server
@@ -57,7 +57,7 @@ def _api(method: str, path: str, **kw) -> Any:
         with _client() as c:
             r = c.request(method, path, **kw)
     except httpx.ConnectError:
-        raise StudioError(f"连不上 {BASE_URL}：请先在 ai-tools 目录运行 `uv run studio web --no-browser`")
+        raise StudioError(f"连不上 {BASE_URL}：请先在 ai-studio/engine 目录运行 `uv run studio web --no-browser`")
     except httpx.TimeoutException:
         raise StudioError(f"{BASE_URL}{path} 30 秒没响应，studio web 可能卡住了")
     if r.headers.get("content-type", "").startswith("application/json"):

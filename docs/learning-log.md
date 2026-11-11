@@ -361,3 +361,15 @@ float16 vs 默认：画面 SSIM 0.95，人脸相似度持平 → 默认用 float
 ### 待同步：跃迁工作台
 
 - 2026-11-05：镜头本加「导出 JSON」，ai-tools `studio import -` 支持剪贴板导入，两边用真实导出文件和本地模型联调通过；镜头本 72 项测试、覆盖率 93.4%，ai-tools 55 项测试通过。当前没有可写入的跃迁工作台目标，按 CLAUDE.md 保留此条待同步。
+
+## 2026-11-11 · 合并为 ai-studio 仓库
+
+ai-tools 和镜头本合并成一个仓库 ai-studio，放在 `/Users/lv/work/AI/ai-studio`，内部分成三个独立子项目：`web/`（Vite + React + TS 工作台）、`server/`（镜头本的 NestJS 后端，用 `git filter-branch` 只保留 server/ 的 9 个提交后合并进来，历史可查）、`engine/`（原 ai-tools 的 Python 代码，项目名改为 studio-engine，包名和 `studio` 命令不变）。镜头本 Flutter 客户端归档到 `AI/archive/jingtouben`，合并前的未提交改动保存在那边的 `wip/before-merge` 分支。
+
+前端从手写的 esbuild 脚本换成 Vite：`npm run dev` 独立启动，`/api`、`/files` 代理到引擎（`VITE_PROXY_TARGET`），接口前缀可以用 `VITE_API_BASE` 配置；构建产物仍输出到 `engine/studio/web/static`，由引擎托管，不装 Node 也能用。`shell/aliases.zsh` 改为按自身位置推算引擎目录，以后仓库再移动也不用改。CI 改成按目录触发 web 和 server；engine 依赖 MLX，暂不进 CI。
+
+验证：engine 55 项 unittest 通过，`studio check` 除 ComfyUI 未启动外全部正常；server typecheck 通过、25 项测试通过（行覆盖率 99.53%、分支 85.71%）、build 通过；web 类型检查和 Vite 构建通过；浏览器里分别打开引擎托管页面（8780）和 Vite 开发服务器（5174），项目列表、封面图、任务历史都正常，控制台无报错。
+
+### 待同步：跃迁工作台
+
+- 2026-11-11：ai-tools 与镜头本合并为 ai-studio（web / server / engine 三个子项目），镜头本客户端归档；前端改用 Vite 独立运行；engine 55 项、server 25 项测试通过，两种方式打开控制台均正常。当前没有可写入的跃迁工作台目标，按 CLAUDE.md 保留此条待同步。

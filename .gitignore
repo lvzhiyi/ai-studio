@@ -1,9 +1,23 @@
-output/
+.DS_Store
+.idea/
+*.iml
+
+# engine（Python）
 .venv/
 __pycache__/
 *.pyc
-.DS_Store
+output/
 models/
-
-# 临时文件（打包、传输用）
 tmp/
+
+# web
+web/node_modules/
+web/dist/
+
+# server
+server/node_modules/
+server/dist/
+server/coverage/
+server/.env
+server/tsconfig.tsbuildinfo
+server/coverage.log

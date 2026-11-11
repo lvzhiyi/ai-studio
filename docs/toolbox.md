@@ -40,7 +40,7 @@ tts "台词" -v Vivian -i "紧张，压低声音" -o 文件名
 
 | 东西 | 位置 |
 |---|---|
-| 本项目 | `~/ai-tools` |
+| 本项目 | `/Users/lv/work/AI/ai-studio`（引擎在 `engine/`） |
 | ComfyUI 输出图片 | `~/ComfyUI-Installs/comfy-lv/output`（以实际为准） |
 | LM Studio 模型 | `~/.lmstudio/models` |
 | Hugging Face 模型缓存（whisper / tts） | `~/.cache/huggingface` |

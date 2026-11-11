@@ -1,5 +1,5 @@
 [project]
-name = "ai-tools"
+name = "studio-engine"
 version = "0.1.0"
 description = "本地 AI 短剧生产线：剧本 → 分镜 → 出图 → 配音 → 字幕 → 预览视频"
 requires-python = ">=3.11,<3.13"

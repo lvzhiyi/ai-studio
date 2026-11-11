@@ -1,5 +1,8 @@
-# ai-tools 的命令行小工具。在 ~/.zshrc 里加一行即可启用：
-#   source ~/ai-tools/shell/aliases.zsh
+# studio-engine 的命令行小工具。在 ~/.zshrc 里加一行即可启用（路径换成仓库实际位置）：
+#   source /Users/lv/work/AI/ai-studio/engine/shell/aliases.zsh
+
+# 引擎目录：按本文件位置推算，仓库移动后不用改
+STUDIO_ENGINE_DIR="${${(%):-%x}:A:h:h}"
 
 # 国内下载 Hugging Face 模型走镜像
 export HF_ENDPOINT=${HF_ENDPOINT:-https://hf-mirror.com}
@@ -18,4 +21,4 @@ srt() {
 
 # tts：单句配音（Qwen3-TTS）
 #   用法：tts "台词" -v Vivian -i "紧张，压低声音" -o 文件名
-tts() { uv run --python 3.12 --with mlx-audio python ~/ai-tools/tts.py "$@"; }
+tts() { uv run --python 3.12 --with mlx-audio python "$STUDIO_ENGINE_DIR/tts.py" "$@"; }

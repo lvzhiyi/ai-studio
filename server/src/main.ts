@@ -12,7 +12,7 @@ async function bootstrap(): Promise<void> {
   const port = Number(process.env.PORT ?? 3000);
   await app.listen(port, '0.0.0.0');
   const mode = process.env.LLM_API_KEY ? '真实模型' : '模拟模式';
-  new Logger('Bootstrap').log(`镜头本转发服务已启动：http://localhost:${port}（${mode}）`);
+  new Logger('Bootstrap').log(`ai-studio 后端已启动：http://localhost:${port}（${mode}）`);
 }
 
 void bootstrap();

@@ -1,19 +1,21 @@
-# ai-tools · 本地 AI 短剧工作台
+# studio-engine · ai-studio 的本地执行引擎
+
+> 原 ai-tools 项目。2026-11-11 起作为 [ai-studio](../README.md) 仓库的 `engine/` 子项目：下文的命令都在 `engine/` 目录下运行，网页控制台前端已移到仓库根目录的 `web/`。
 
 一台 MacBook Pro（M5 Pro / 24G），全本地、零 API 费用，把**剧本**变成**分镜图 + 动态镜头 + 配音 + 字幕 + 预览视频**，并用 AI 自动质检保证角色前后一致（动起来以后也检查）。
 
 ## 演示
 
 <p align="center">
-  <img src="docs/assets/demo.webp" width="300" alt="preview 演示：4 个镜头都由本地图生视频生成">
+  <img src="../docs/assets/demo.webp" width="300" alt="preview 演示：4 个镜头都由本地图生视频生成">
 </p>
 
-![分镜总览](docs/assets/storyboard.jpg)
+![分镜总览](../docs/assets/storyboard.jpg)
 
 > 示例剧本《雨夜》跑一遍流水线的产出：先生成角色的三角度定妆照，有角色的镜头照着定妆照画（FLUX.2 klein 参考图生成），
 > 每个镜头再由 LTX-2.3（MLX 本地运行）按 `motion` 动作描述生成 5 秒动态镜头，
-> 配音、字幕全部由本地模型生成，ffmpeg 自动拼成预览视频。带声音的完整预览：[docs/assets/preview.mp4](docs/assets/preview.mp4)
-> （加图生视频之前的静态版：[demo-v4-static.gif](docs/assets/demo-v4-static.gif)）
+> 配音、字幕全部由本地模型生成，ffmpeg 自动拼成预览视频。带声音的完整预览：[docs/assets/preview.mp4](../docs/assets/preview.mp4)
+> （加图生视频之前的静态版：[demo-v4-static.gif](../docs/assets/demo-v4-static.gif)）
 
 **实测**（MacBook Pro M5 Pro / 24G）
 
@@ -34,7 +36,7 @@
 | v3 | FLUX.2 klein 参考图生成（MOSS 定妆照） | 0.41 | 12.5 分钟 |
 | **v4** | **klein 定妆照（正脸 + 左右侧脸）+ klein 全流程** | **0.58** | **3.5 分钟** |
 
-关键结论（详见 [学习日志](docs/learning-log.md)）：换 seed 抽卡"能挑不能造"；参考图生成才能真正锁住长相；
+关键结论（详见 [学习日志](../docs/learning-log.md)）：换 seed 抽卡"能挑不能造"；参考图生成才能真正锁住长相；
 定妆照和剧照由同一个模型生成，风格统一后分数整体上升。人工标注显示常规镜头一致性 100% 获认可，大笑、怒吼等极端表情仍会"换脸"。
 
 **动起来以后脸会不会变**（v5：图生视频；每 6 帧抽 1 帧和定妆照比，只统计正脸 / 半侧脸的帧）
@@ -144,13 +146,13 @@ sequenceDiagram
 ```bash
 brew install ffmpeg uv
 uv tool install mlx-whisper
-echo 'source ~/ai-tools/shell/aliases.zsh' >> ~/.zshrc && source ~/.zshrc
+echo 'source /Users/lv/work/AI/ai-studio/engine/shell/aliases.zsh' >> ~/.zshrc && source ~/.zshrc
 ```
 
 ## 目录结构
 
 ```
-ai-tools/
+engine/
 ├── README.md            ← 你在看的这个
 ├── config.toml          ← 所有配置：端口、模型、音色、字幕字数……
 ├── pyproject.toml       ← Python 依赖（用 uv 管理）
@@ -178,7 +180,7 @@ ai-tools/
 │   ├── face.py          ← 人脸一致性（OpenCV YuNet + SFace）
 │   ├── vision.py        ← 看图质检（LM Studio 多模态模型）
 │   └── llm.py           ← OpenAI 兼容客户端（plan / vision 共用）
-├── web/                 ← 网页控制台前端源码（React + TypeScript，npm run build → studio/web/static/）
+├── （前端源码在仓库根目录 ../web/：Vite + React + TypeScript，npm run build → studio/web/static/）
 ├── workflows/           ← ComfyUI 工作流（API 格式）
 ├── screenplays/         ← 剧本（纯文本）
 ├── storyboards/         ← 分镜表（JSON）
@@ -195,7 +197,7 @@ ai-tools/
 ## 第一次使用
 
 ```bash
-cd ~/ai-tools
+cd /Users/lv/work/AI/ai-studio/engine
 uv sync                 # 安装依赖（第一次要几分钟）
 uv run studio check     # 检查环境
 ```
@@ -282,7 +284,7 @@ uv run studio web        # 打开 http://127.0.0.1:8780
   和命令行走同一条代码路径；24GB 内存一次只能跑一个大模型，所以串行排队；子进程结束，模型内存全部释放
 - 日志用 **SSE** 推给页面（断线带 `?from=N` 续传）；取消是给整个进程组发 SIGINT，和按 Ctrl+C 一样收尾，已生成的文件和运行报告都保留
 - 重做某个镜头时旧文件挪进 `_history/<时间>/`，不删除；视频片段重做会换随机种子（同一张图 + 同一段描述，只有换种子才出不同的动作）
-- 前端（`web/`，React + TypeScript，esbuild 打包）：构建产物提交在 `studio/web/static/`，**用控制台不需要装 Node**；
+- 前端（仓库根目录 `web/`，React + TypeScript，Vite 构建）：构建产物提交在 `studio/web/static/`，**用控制台不需要装 Node**；
   改前端时 `cd web && npm install && npm run dev`（监听构建，刷新浏览器即可）
 
 ## MCP：让 Agent 直接操作流水线
@@ -291,7 +293,7 @@ uv run studio web        # 打开 http://127.0.0.1:8780
 
 ```bash
 uv run studio web --no-browser   # 先开控制台（MCP 只是它的客户端）
-claude mcp add ai-tools -- uv --directory ~/ai-tools run python -m studio.mcp_server
+claude mcp add ai-tools -- uv --directory /Users/lv/work/AI/ai-studio/engine run python -m studio.mcp_server
 ```
 
 Claude Desktop 在 `claude_desktop_config.json` 里加同样的 `command` / `args` 即可。控制台不在默认地址时，设环境变量 `STUDIO_URL`。
@@ -364,7 +366,7 @@ git clone https://github.com/dgrauet/ltx-2-mlx.git && cd ltx-2-mlx && uv sync
 
 ## 从镜头本导入
 
-[镜头本](../jingtouben)（Flutter App）负责"生成之前"的整理：中文分镜卡（景别、画面、台词、为什么这样拍）和角色卡（外貌、服装）。
+镜头本（Flutter App，已于 2026-11-11 归档，后端并入本仓库 `server/`）负责"生成之前"的整理：中文分镜卡（景别、画面、台词、为什么这样拍）和角色卡（外貌、服装）。
 `studio import` 把它的导出文件转成本项目的分镜表，再照常 `studio run`。
 
 ```bash

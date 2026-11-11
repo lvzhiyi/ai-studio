@@ -61,7 +61,7 @@ function App() {
   return (
     <div className="shell">
       <aside className="side">
-        <div className="brand">ai-tools<span>本地 AI 短剧工作台</span></div>
+        <div className="brand">ai-studio<span>本地 AI 短剧工作台</span></div>
         <nav>
           {NAV.map(([k, label, icon]) => (
             <a key={k} href={href(...(k ? [k] : []))} className={active === k ? "on" : ""}>

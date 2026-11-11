@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { api, type Job, type ModelMode, type ModelRouting } from "./api";
+import { API_BASE, api, type Job, type ModelMode, type ModelRouting } from "./api";
 
 // ------------------------------------------------------------------ 数据加载
 export function useAsync<T>(fn: () => Promise<T>, deps: unknown[]) {
@@ -189,7 +189,7 @@ export function useJobStream(id: string | null) {
       });
     };
     const open = () => {
-      es = new EventSource(`/api/jobs/${encodeURIComponent(id)}/events?from=${received}`);
+      es = new EventSource(`${API_BASE}/api/jobs/${encodeURIComponent(id)}/events?from=${received}`);
       es.addEventListener("line", (e) => {
         received++;
         buf.push(JSON.parse((e as MessageEvent).data) as string);

@@ -1,12 +1,13 @@
 {
-  "name": "ai-tools-web",
+  "name": "ai-studio-web",
   "private": true,
   "version": "0.1.0",
-  "description": "ai-tools 网页控制台（uv run studio web）",
+  "description": "ai-studio Web 工作台（Vite + React + TS）",
   "type": "module",
   "scripts": {
-    "build": "node build.mjs",
-    "dev": "node build.mjs --watch",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -17,7 +18,8 @@
   "devDependencies": {
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "esbuild": "^0.28.0",
-    "typescript": "^6.0.0"
+    "@vitejs/plugin-react": "^6.3.0",
+    "typescript": "^6.0.0",
+    "vite": "^8.3.8"
   }
 }

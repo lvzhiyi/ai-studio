@@ -1,8 +1,8 @@
 {
-  "name": "jingtouben-server",
+  "name": "ai-studio-server",
   "version": "0.1.0",
   "private": true,
-  "description": "镜头本转发服务：持有模型 API Key、按设备限流、下发提示词模板",
+  "description": "ai-studio Agent 后端（当前为转发服务：持有模型 API Key、按设备限流、下发提示词模板）",
   "scripts": {
     "build": "nest build",
     "start": "node dist/main.js",

@@ -78,8 +78,11 @@ export interface Calibration {
 
 export class ApiError extends Error {}
 
+/** 接口地址前缀：留空为同源；前后端分开部署时用 VITE_API_BASE 指定。 */
+export const API_BASE = (import.meta.env.VITE_API_BASE ?? "").replace(/\/$/, "");
+
 async function req<T>(method: string, url: string, body?: unknown): Promise<T> {
-  const r = await fetch(url, {
+  const r = await fetch(API_BASE + url, {
     method,
     headers: body === undefined ? {} : { "Content-Type": "application/json" },
     body: body === undefined ? undefined : JSON.stringify(body),
