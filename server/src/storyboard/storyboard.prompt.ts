@@ -6,7 +6,7 @@ export const CAMERA_MOVES = ['固定', '推', '拉', '摇', '移', '跟', '升�
 
 export interface StoryboardInput {
   story: string;
-  characters: Array<{ name: string; appearance?: string; outfit?: string }>;
+  characters: Array<{ name: string; appearance?: string; outfit?: string; personality?: string }>;
 }
 
 export interface ChatMessage {
@@ -38,7 +38,8 @@ export function buildStoryboardMessages(input: StoryboardInput): ChatMessage[] {
           .map((c) => {
             const appearance = c.appearance ? `：${c.appearance}` : '';
             const outfit = c.outfit ? `，穿${c.outfit}` : '';
-            return `- ${c.name}${appearance}${outfit}`;
+            const personality = c.personality ? `，性格：${c.personality}` : '';
+            return `- ${c.name}${appearance}${outfit}${personality}`;
           })
           .join('\n')
       : '（未提供：沿用故事里的称呼，如「我」「她」「初恋」；故事没有称呼时再起名，同一角色前后名称保持一致）';

@@ -24,6 +24,11 @@ export class CharacterDto {
   @IsString()
   @MaxLength(200)
   outfit?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  personality?: string;
 }
 
 export class StoryboardRequestDto {
