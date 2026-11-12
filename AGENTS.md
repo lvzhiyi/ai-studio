@@ -2,6 +2,8 @@
 
 给 AI 编程助手和自己看的约定。产品和运行方式见 [README](README.md)，分层、现状和过渡计划见 [架构说明](docs/architecture.md)。
 
+工作流配置：根目录 `ai-workflow.yaml`；项目文档入口见 [项目首页](docs/product/项目首页.md)。
+
 ## 仓库
 
 - `web/`：Web 工作台（Vite + React + TS）

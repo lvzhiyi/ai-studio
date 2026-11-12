@@ -387,3 +387,14 @@ ai-tools 和镜头本合并成一个仓库 ai-studio，放在 `/Users/lv/work/AI
 ### 待同步：跃迁工作台
 
 - 2026-11-11：清理合并遗留：server 删除道具绘图和即梦/可灵模板，补架构说明和分镜职责约定，Dockerfile 改用 pnpm；server 18 项测试通过，镜像构建未验证。当前没有可写入的跃迁工作台目标，按 CLAUDE.md 保留此条待同步。
+
+
+## 2026-11-12 · 接入 ai-dev-workflow 工作流
+
+根目录新增 `ai-workflow.yaml`：评审基线 develop，验证按子项目分档（轻量只跑改动子项目，标准跑三个子项目，完整再加 server 覆盖率），默认验证平台 web，交接记录放 `docs/development/handoffs/`。AGENTS.md 加了配置指针；新建 `docs/product/`（项目首页、需求说明、版本任务总览、术语表骨架）和 `docs/development/`（代码规范、验证规范、UI 规范、联调约定），架构说明沿用 `docs/architecture.md`。
+
+验证：`check_docs.py --check-config` 通过（配置、链接、术语表 0 错误）。只改文档和配置，未跑代码测试。
+
+### 待同步：跃迁工作台
+
+- 2026-11-12：项目接入 ai-dev-workflow，生成工作流配置与文档骨架，文档检查通过。当前没有可定位的跃迁工作台写入目标，按 CLAUDE.md 保留此条待同步。
