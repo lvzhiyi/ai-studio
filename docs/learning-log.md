@@ -398,3 +398,36 @@ ai-tools 和镜头本合并成一个仓库 ai-studio，放在 `/Users/lv/work/AI
 ### 待同步：跃迁工作台
 
 - 2026-11-12：项目接入 ai-dev-workflow，生成工作流配置与文档骨架，文档检查通过。当前没有可定位的跃迁工作台写入目标，按 CLAUDE.md 保留此条待同步。
+
+## 2026-11-18 · server 最小 Agent run
+
+**做了什么**
+- 在 `server/` 加内存 run：`POST /runs` 创建、`GET /runs/:id` 读取、`POST /runs/:id/stream` 用现有 SSE 风格跑一轮
+- 一轮工具循环写死两步，不让模型决定下一步：`draft_storyboard` 走现有分镜网关，把 JSON Lines 收成引擎分镜表；`engine_handoff` 经适配器交给 studio-engine
+- 适配器只打引擎现成的 `GET/POST/PUT /api/storyboards` 和 `POST /api/jobs`。步骤只有 images / audio / cast / qa。默认只保存，不提交出图
+- 引擎入参是文件名和分镜表，没有 run id，也没有用户。日志只留状态码和错误码，不打印故事、请求体、响应体
+- 提示词没改。景别、道具、reason 这些引擎表没有的字段在对齐时丢掉；look 暂时用角色卡原文，不在这里编英文外貌
+
+**刻意不做**
+- BullMQ、Postgres、Redis、MinIO
+- 多引擎框架、server 侧 MCP host
+- 把 web 代理从 engine 改到 server
+- 登录 / JWT
+- 崩溃恢复和审批节点
+
+**踩坑**
+- 引擎创建分镜没有「有则覆盖」。同名会 400，正文里带「已经有同名」时再 PUT；其它 400 不能继续，否则会留下一份占位分镜
+- `AbortSignal.timeout` 成功返回后定时器还在。测试和进程都会被 10 秒句柄拖住，改成自己 `setTimeout` 并在 `finally` 里清掉
+- 限流按设备每分钟 3 次（测试环境）。创建、开流、再读、再开一次，第四下会变成 429，冲突用例要把读取换到另一个设备 id
+
+**验证**
+- `cd server && npm run typecheck && npm test`：12 个套件、53 项通过
+- 另跑 `npm run test:cov`：行 99.8%，分支 93.6%（门槛 90% / 75%）
+- 没有改 web，也没有连真实引擎或真实模型
+
+**面试怎么讲**
+内核只依赖适配器端口：保存一份已经对齐的分镜表，或者按白名单提交一个步骤。短剧字段放在 drama 插件里，不进循环本身。先用内存把「拆分镜 → 对齐 → 交给引擎」跑通，队列和数据库留到这条路径稳定之后。否则会先堆基建，却仍然没有一次工具调用。
+
+### 待同步：跃迁工作台
+
+- 2026-11-18：server 增加内存 run、一轮工具循环和 studio-engine 适配器；typecheck 与 53 项测试通过，覆盖率超过门槛。当前没有可写入的跃迁工作台目标，按 CLAUDE.md 保留此条待同步。
