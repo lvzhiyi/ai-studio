@@ -2,7 +2,7 @@
   "name": "ai-studio-server",
   "version": "0.1.0",
   "private": true,
-  "description": "ai-studio Agent 后端（当前为转发服务：持有模型 API Key、按设备限流、下发提示词模板）",
+  "description": "ai-studio Agent 后端：流式分镜、内存中的最小 run 与一轮工具循环、studio-engine 适配器（密钥与限流仍在 server）",
   "scripts": {
     "build": "nest build",
     "start": "node dist/main.js",
