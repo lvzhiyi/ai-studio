@@ -27,13 +27,15 @@ engine（Python studio-engine）        只监听 127.0.0.1
 
 ```
 web ──/api、/files──▶ engine 控制台接口（127.0.0.1:8780，同时托管 web 的构建产物）
-server（独立运行，还没接上 engine）：POST /storyboard/stream、GET /health
+server：POST /storyboard/stream、GET /health
+        POST /runs、GET /runs/:id、POST /runs/:id/stream
+        （内存 run + 一轮工具循环 + studio-engine 适配器；web 仍不经过 server）
 ```
 
 | 子项目 | 已有 | 来源 |
 |---|---|---|
 | web | 引擎控制台：总览、项目、剧本、试一张图、任务、运行历史、阈值校准 | 原 ai-tools 控制台 |
-| server | 流式分镜（SSE）、OpenAI 兼容的 LLM 服务（没有 Key 时返回模拟数据）、按设备或 IP 限流、CORS | 原镜头本转发服务；道具绘图和即梦/可灵模板已删除 |
+| server | 流式分镜（SSE）、OpenAI 兼容的 LLM 服务（没有 Key 时返回模拟数据）、按设备或 IP 限流、CORS；内存中的最小 run、一轮工具循环（起草分镜 → 交给引擎）、studio-engine HTTP 适配器（可换成 mock） | 原镜头本转发服务；道具绘图和即梦/可灵模板已删除；run 持久化、队列、登录尚未做 |
 | engine | 流水线、任务队列 + SSE、质检、MCP Server、命令行 | 原 ai-tools |
 
 ## 从现状到目标的过渡
